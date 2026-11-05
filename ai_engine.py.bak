@@ -1,0 +1,25 @@
+import sqlite3
+
+class CustomAIEngine:
+    def __init__(self):
+        print("Initializing Custom AI Engine...")
+
+    def get_system_settings(self):
+        conn = sqlite3.connect('platform.db', check_same_thread=False)
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM settings")
+        settings = dict(cursor.fetchall())
+        conn.close()
+        return settings
+
+    def generate_response(self, user_prompt: str) -> str:
+        settings = self.get_system_settings()
+        ai_name = settings.get('ai_name', 'Ansh-AI')
+        system_prompt = settings.get('system_prompt', 'You are a helpful assistant.')
+        
+        # NOTE: Yahan aap apne custom PyTorch model ki `.generate()` function ya logic connect kar sakte hain.
+        # Filhal customized intelligent simulation response:
+        response = f"[{ai_name} Core Active]\n\n{system_prompt}\n\nAapke sawaal '{user_prompt}' ke mutabiq yeh raha coding/solution logic:\n```python\n# Custom generated code by Ansh-AI\ndef solve_problem():\n    print('Hello from your own custom AI platform!')\n\nsolve_problem()\n```"
+        return response
+
+ai_engine = CustomAIEngine()
