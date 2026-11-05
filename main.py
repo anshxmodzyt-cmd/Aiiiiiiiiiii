@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import sqlite3
@@ -23,7 +23,7 @@ class PlanUpdate(BaseModel):
 
 @app.get("/", response_class=HTMLResponse)
 def user_chat_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html", {})
 
 @app.get("/admin", response_class=HTMLResponse)
 def admin_dashboard(request: Request):
@@ -36,8 +36,7 @@ def admin_dashboard(request: Request):
     settings = dict(cursor.fetchall())
     conn.close()
     
-    return templates.TemplateResponse("admin.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "admin.html", {
         "users": users,
         "settings": settings
     })
@@ -57,12 +56,11 @@ def chat_endpoint(data: ChatRequest):
         
     daily_limit, used_today, plan = user
     
-    # VIP users have unlimited quota (limit = 99999)
     if daily_limit < 99999 and used_today >= daily_limit:
         conn.close()
         return {
             "status": "limit_reached", 
-            "reply": "⚠️ Aapki aaj ki daily message limit khatam ho gayi hai! Admin panel se plan upgrade karwayein."
+            "reply": "⚠️ Aapki aaj ki daily message limit khatam ho gayi hai!"
         }
     
     # 2. Generate AI Response
