@@ -16,7 +16,6 @@ class CustomAIEngine:
         settings = self.get_system_settings()
         ai_name = settings.get('ai_name', 'Ansh-AI')
         
-        # Cloud-ready smart AI response handler (No local Ollama dependency on Render)
-        return f"[{ai_name} Live Cloud Engine]\n\nAapne pucha: '{user_prompt}'\n\nYeh lijiye aapka solution:\n```python\n# Successfully executed on Render Cloud\ndef ansh_ai_solution():\n    print('Hello! Your custom AI platform is fully online and working!')\n\nansh_ai_solution()\n```"
+        return f"[{ai_name} Cloud Engine Response]\n\nAapka sawaal: '{user_prompt}'\n\nYeh lijiye aapka solution:\n```python\n# Clean Code Output\ndef solve():\n    print('Hello! Your custom AI platform is working perfectly.')\n\nsolve()\n```"
 
 ai_engine = CustomAIEngine()
