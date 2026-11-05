@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ansh-AI Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col h-screen font-sans">
+    <header class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center shadow-md">
+        <h1 class="text-xl font-bold text-blue-400">🤖 Ansh-AI Studio</h1>
+        <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-300">Logged in as: <strong class="text-white">User ID: 2 (Free Plan)</strong></span>
+            <a href="/admin" target="_blank" class="bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded text-xs font-bold transition">Admin Panel</a>
+        </div>
+    </header>
 
+    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <div class="bg-gray-800 p-4 rounded-xl max-w-3xl border border-gray-700 shadow">
+            <p class="font-bold text-blue-400 mb-1">Ansh-AI:</p>
+            <p>Hello! Main aapka apna custom AI hoon. Coding, logic, ya kisi bhi sawaal ke liye mujhse puchiye!</p>
+        </div>
+    </div>
+
+    <div class="p-4 bg-gray-800 border-t border-gray-700 flex gap-3 max-w-5xl mx-auto w-full">
+        <input type="text" id="user-input" placeholder="Kuch bhi puchiye (e.g., Python mein API kaise banayein)..." class="flex-1 p-3.5 rounded-lg bg-gray-700 focus:outline-none border border-gray-600 text-white">
+        <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3.5 rounded-lg font-bold transition shadow">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const box = document.getElementById('chat-box');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            // Display User Message
+            box.innerHTML += `<div class="text-right"><span class="bg-blue-600 text-white p-3.5 rounded-xl inline-block max-w-2xl text-left shadow">${msg}</span></div>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: 2, message: msg }) // User ID 2 is regular user
+                });
+                const data = await res.json();
+
+                // Display AI Reply
+                box.innerHTML += `<div class="text-left"><div class="bg-gray-800 text-gray-100 p-4 rounded-xl inline-block max-w-3xl border border-gray-700 shadow whitespace-pre-wrap"><strong class="text-blue-400">Ansh-AI:</strong>\n\n${data.reply}</div></div>`;
+                box.scrollTop = box.scrollHeight;
+            } catch (err) {
+                alert("Server connection error!");
+            }
+        }
+    </script>
+</body>
+</html>

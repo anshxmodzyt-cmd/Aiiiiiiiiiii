@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Ansh-AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white p-8 font-sans">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-blue-500">🛠️ Admin Control Panel</h1>
+            <p class="text-gray-400 text-sm mt-1">Manage user plans, daily token limits, and platform settings.</p>
+        </div>
+        <a href="/" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded font-semibold text-sm">← Back to Chat</a>
+    </div>
+
+    <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 shadow-xl">
+        <h2 class="text-xl font-semibold mb-4 text-gray-200">Registered Users & Plan Control</h2>
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b border-gray-800 text-gray-400 text-sm">
+                    <th class="p-3">ID</th>
+                    <th class="p-3">Username</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Plan</th>
+                    <th class="p-3">Usage Today</th>
+                    <th class="p-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr class="border-b border-gray-800/60 hover:bg-gray-800/40 transition">
+                    <td class="p-3 text-gray-400">#{{ u[0] }}</td>
+                    <td class="p-3 font-bold text-white">{{ u[1] }} {% if u[6] == 1 %}<span class="bg-red-900 text-red-300 text-xs px-2 py-0.5 rounded ml-2">ADMIN</span>{% endif %}</td>
+                    <td class="p-3 text-gray-300">{{ u[2] }}</td>
+                    <td class="p-3"><span class="bg-blue-900/60 text-blue-300 px-2.5 py-1 rounded-md text-xs font-bold border border-blue-800">{{ u[3] }}</span></td>
+                    <td class="p-3 font-mono text-sm">{{ u[5] }} / {{ u[4] }}</td>
+                    <td class="p-3 flex gap-2">
+                        <button onclick="updatePlan({{ u[0] }}, 'PRO', 500)" class="bg-green-600 hover:bg-green-700 px-3 py-1 text-xs rounded font-bold transition">Set PRO (500)</button>
+                        <button onclick="updatePlan({{ u[0] }}, 'VIP', 99999)" class="bg-purple-600 hover:bg-purple-700 px-3 py-1 text-xs rounded font-bold transition">Set VIP (Unlimited)</button>
+                        <button onclick="updatePlan({{ u[0] }}, 'Free', 20)" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 text-xs rounded font-bold transition">Reset Free (20)</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function updatePlan(userId, planName, limit) {
+            const res = await fetch('/api/admin/update-plan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ user_id: userId, new_plan: planName, new_limit: limit })
+            });
+            const data = await res.json();
+            if(data.status === 'success') {
+                alert('User plan updated successfully!');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
